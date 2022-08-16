@@ -2,11 +2,14 @@ package main;
 
 import frame.LoginFrame;
 
+/**
+ * 程序运行入口类
+ */
 public class Start
 {
     public static void main(String[] args)
     {
-        try
+        try// 启用BeautyEye主题
         {
             org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
         }
@@ -14,7 +17,7 @@ public class Start
         {
             e.printStackTrace();
         }
-        LoginFrame frame = new LoginFrame();
-        frame.setVisible(true);
+        LoginFrame frame = new LoginFrame();// 登陆窗体
+        frame.setVisible(true);// 窗体可见
     }
 }
