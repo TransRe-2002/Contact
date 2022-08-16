@@ -14,6 +14,9 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JOptionPane;
 
 /**
  * 主窗体
@@ -26,7 +29,10 @@ public class MainFrame extends ContactFrame // 继承ContactFrame类
     private DefaultTableModel tableModel;
     static private User user;
     private JButton update_btn;
+    private JButton add_btn;
+    private JButton del_btn;
     /**
+     *
      * 构造方法
      */
     public MainFrame()
@@ -55,6 +61,58 @@ public class MainFrame extends ContactFrame // 继承ContactFrame类
                 }
             }
         });
+
+        update_btn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                int rowindex = table.getSelectedRow();
+                if (rowindex > -1)
+                {
+                    String id = (String) table.getValueAt(rowindex,0);
+
+                    Customer update = dao.selectCustomer(Integer.parseInt(id));
+
+                    UpdateCustomerFrame show = new UpdateCustomerFrame(update, MainFrame.this);
+                    show.setVisible(true);
+                }
+            }
+        });
+
+        add_btn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                AddCustomerFrame add = new AddCustomerFrame(MainFrame.this);
+                add.setVisible(true);
+            }
+        });
+
+        del_btn.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                int rowindex = table.getSelectedRow();
+                if (rowindex > -1)
+                {
+                    int i = JOptionPane.showConfirmDialog(MainFrame.this,
+                            "确认是否删除"+table.getValueAt(rowindex,1) + "？",
+                            "注意！",JOptionPane.YES_NO_OPTION);
+                    if (i == JOptionPane.YES_OPTION)
+                    {
+                        Customer del = new Customer();
+                        String id = (String) table.getValueAt(rowindex,0);
+                        del.setId(Integer.parseInt(id));
+                        dao.deleteCustomer(del,user);
+                        tableModel.removeRow(table.getSelectedRow());
+                    }
+                }
+
+            }
+        });
     }
 
     protected void init()
@@ -65,6 +123,8 @@ public class MainFrame extends ContactFrame // 继承ContactFrame类
         table.setCellEditable(false);
         initTable();
         update_btn = new JButton("修改");
+        add_btn = new JButton("添加");
+        del_btn = new JButton("删除");
         if (user.getStatus().equals(User.ADMIN))
         {
             JPanel bottomPanel = new JPanel();
@@ -73,6 +133,8 @@ public class MainFrame extends ContactFrame // 继承ContactFrame类
             bottomLaybot.setAlignment(FlowLayout.RIGHT);
             bottomPanel.setLayout(bottomLaybot);
             bottomPanel.add(update_btn);
+            bottomPanel.add(add_btn);
+            bottomPanel.add(del_btn);
             getContentPane().add(bottomPanel,BorderLayout.SOUTH);
         }
     }
